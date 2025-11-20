@@ -5,6 +5,12 @@ TagManager:
   serializedVersion: 3
   tags:
   - Terreno
+  - Guerrero
+  - Maga
+  - Hechicero
+  - PocionRoja
+  - PocionAzul
+  - PocionVerde
   layers:
   - Default
   - TransparentFX
