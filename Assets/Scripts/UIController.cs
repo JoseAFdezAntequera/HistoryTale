@@ -1,8 +1,10 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class UIController : MonoBehaviour
 {
     [SerializeField] private GameObject canvas;
+    [SerializeField] private GameObject player;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,6 +23,7 @@ public class UIController : MonoBehaviour
     public void CloseInventary()
     {
         canvas.gameObject.SetActive(false);
+        player.gameObject.GetComponent<Player>().bloquear = false;
     }
 
 }
