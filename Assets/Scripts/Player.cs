@@ -60,7 +60,7 @@ public class Player : MonoBehaviour
                 // Obtenemos la distancia hasta el destino
                 distancia = Vector3.Distance(transform.position, destination);
 
-                // Si la distancia es mayor que la apuntada en el NavMeshAgent   gameObject.GetComponent<NavMeshAgent>().stoppingDistance
+                // Si la distancia es mayor que la apuntada en el NavMeshAgent
                 if (distancia > 0.5f)
                 {
                     // Vamos al destino

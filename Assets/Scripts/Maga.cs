@@ -28,6 +28,7 @@ public class Maga : MonoBehaviour
         {
             // Si está a la distancia adecuada encaramos el personaje al player
             transform.LookAt(player.transform.position);
+            player.transform.LookAt(transform.position);
 
             // Activamos el flowchart del personaje
             Fungus.Flowchart.BroadcastFungusMessage("Maga");
