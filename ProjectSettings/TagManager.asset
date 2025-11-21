@@ -11,6 +11,11 @@ TagManager:
   - PocionRoja
   - PocionAzul
   - PocionVerde
+  - Box
+  - BackButton
+  - ResumeButton
+  - Win
+  - Defeat
   layers:
   - Default
   - TransparentFX

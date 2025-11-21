@@ -5,6 +5,7 @@ public class UIController : MonoBehaviour
 {
     [SerializeField] private GameObject canvas;
     [SerializeField] private GameObject player;
+    [SerializeField] private GameObject winCanvas;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -26,4 +27,12 @@ public class UIController : MonoBehaviour
         player.gameObject.GetComponent<Player>().bloquear = false;
     }
 
+    public void Resume()
+    {
+        winCanvas.gameObject.SetActive(false);
+    }
+    public void Quit()
+    {
+        Application.Quit();
+    }
 }

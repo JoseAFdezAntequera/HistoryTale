@@ -1,3 +1,5 @@
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -5,6 +7,8 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private GameObject camera;
     [SerializeField] private GameObject canvas;
+    [SerializeField] private GameObject winCanvas;
+    [SerializeField] private GameObject cajaSorpresa;
 
     private Vector3 destination;
     private float distancia;
@@ -12,12 +16,15 @@ public class Player : MonoBehaviour
     private Ray ray;
     private RaycastHit hit;
     private bool bloquearHabla;
+    private GameObject interactuable;
+    private int countPocimas;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         bloquear = false;
         bloquearHabla = true;
+        countPocimas = 0;
     }
 
     // Update is called once per frame
@@ -45,9 +52,10 @@ public class Player : MonoBehaviour
 
                             break;
 
-                        case "PocionRoja" or "PocionAzul" or "PocionVerde":
+                        case "PocionRoja" or "PocionAzul" or "PocionVerde" or "Box":
                             destination = new Vector3(hit.point.x, transform.position.y, hit.point.z);
                             bloquear = false;
+                            interactuable = hit.collider.gameObject;
 
                             break;
                     }
@@ -61,7 +69,7 @@ public class Player : MonoBehaviour
                 distancia = Vector3.Distance(transform.position, destination);
 
                 // Si la distancia es mayor que la apuntada en el NavMeshAgent
-                if (distancia > 0.5f)
+                if (distancia > 0.7f)
                 {
                     // Vamos al destino
                     gameObject.GetComponent<Animator>().SetBool("Andar", true);
@@ -69,35 +77,84 @@ public class Player : MonoBehaviour
                 }
                 else
                 {
+                    // Para que no haga el derrapaje
+                    destination = transform.position;
+
                     // Al llegar al destino lo volvemos a bloquear, lo posicionamos exactamente en el destino y paramos la animación
                     gameObject.GetComponent<NavMeshAgent>().SetDestination(destination);
                     gameObject.GetComponent<Animator>().SetBool("Andar", false);
 
-                    // Comprobamos el objeto en hit y lo añadimos al inventario
-                    switch (hit.collider.gameObject.tag)
+                    if (interactuable != null)
                     {
-                        case "PocionRoja":
-                            SetInventario(hit.collider.gameObject, 0);
+                        // Comprobamos el objeto en hit y lo añadimos al inventario
+                        switch (hit.collider.gameObject.tag)
+                        {
+                            case "PocionRoja":
+                                SetInventario(hit.collider.gameObject, 0);
 
-                            break;
+                                break;
 
-                        case "PocionAzul":
-                            SetInventario(hit.collider.gameObject, 1);
+                            case "PocionAzul":
+                                SetInventario(hit.collider.gameObject, 1);
 
-                            break;
+                                break;
 
-                        case "PocionVerde":
-                            SetInventario(hit.collider.gameObject, 2);
+                            case "PocionVerde":
+                                SetInventario(hit.collider.gameObject, 2);
 
-                            break;
+                                break;
+
+                            case "Box":
+                                if (countPocimas >= 3)
+                                {
+                                    // Abrimos el inventario
+                                    if (!canvas.gameObject.activeSelf) canvas.gameObject.SetActive(true);
+
+                                    StartCoroutine(DesaparicionPocimas());
+
+                                    StartCoroutine(ExplosionCajaSorpresa());
+                                }
+                                else
+                                {
+                                    winCanvas.transform.GetChild(0).transform.GetChild(0).gameObject.SetActive(false);
+                                    winCanvas.transform.GetChild(0).transform.GetChild(1).gameObject.SetActive(true);
+                                    winCanvas.gameObject.SetActive(true);
+                                }
+
+                                break;
+                        }
                     }
-
                 }
             }
 
             // Hacemos seguir a la camara al player
             camera.transform.position = new Vector3(transform.position.x, camera.transform.position.y, transform.position.z - 5.0f);
         }
+    }
+
+    IEnumerator DesaparicionPocimas()
+    {
+        yield return new WaitForSeconds(2);
+        canvas.transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).gameObject.SetActive(false);
+        yield return new WaitForSeconds(2);
+        canvas.transform.GetChild(0).transform.GetChild(0).transform.GetChild(1).gameObject.SetActive(false);
+        yield return new WaitForSeconds(2);
+        canvas.transform.GetChild(0).transform.GetChild(0).transform.GetChild(2).gameObject.SetActive(false);
+        yield return new WaitForSeconds(2);
+        canvas.gameObject.SetActive(false);
+    }
+
+    IEnumerator ExplosionCajaSorpresa()
+    {
+        yield return new WaitForSeconds(8);
+        cajaSorpresa.transform.GetChild(1).gameObject.SetActive(false);
+        cajaSorpresa.transform.GetChild(2).gameObject.SetActive(true);
+
+        // Mostramos el panel de victoria
+        winCanvas.transform.GetChild(0).transform.GetChild(0).gameObject.SetActive(true);
+        winCanvas.transform.GetChild(0).transform.GetChild(1).gameObject.SetActive(false);
+        winCanvas.transform.GetChild(0).transform.GetChild(1).gameObject.SetActive(false);
+        winCanvas.gameObject.SetActive(true);
     }
 
     // Estas dos funciones son utilizadas por el Fungus para activar la conversación
@@ -108,6 +165,7 @@ public class Player : MonoBehaviour
 
     public void DesbloquearHabla()
     {
+        destination = transform.position;
         bloquearHabla = false;
     }
 
@@ -115,6 +173,9 @@ public class Player : MonoBehaviour
     {
         // Lo bloqueamos para que no se mueva al dar al boton de cerrar inventario
         bloquear = true;
+
+        // Incrementamos el contador de posicones
+        countPocimas++;
 
         // Ocultamos la pocion
         other.transform.parent.transform.parent.gameObject.SetActive(false);
@@ -124,5 +185,7 @@ public class Player : MonoBehaviour
 
         // Abrimos el inventario
         if (!canvas.gameObject.activeSelf) canvas.gameObject.SetActive(true);
+
+        interactuable = null;
     }
 }
