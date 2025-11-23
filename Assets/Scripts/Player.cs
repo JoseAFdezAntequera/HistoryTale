@@ -105,7 +105,7 @@ public class Player : MonoBehaviour
                                 break;
 
                             case "Box":
-                                if (countPocimas >= 3)
+                                if (countPocimas >= -3)
                                 {
                                     // Abrimos el inventario
                                     if (!canvas.gameObject.activeSelf) canvas.gameObject.SetActive(true);
@@ -134,26 +134,34 @@ public class Player : MonoBehaviour
 
     IEnumerator DesaparicionPocimas()
     {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
+        canvas.transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).gameObject.SetActive(true);
+        yield return new WaitForSeconds(1);
         canvas.transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).gameObject.SetActive(false);
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
+        canvas.transform.GetChild(0).transform.GetChild(0).transform.GetChild(1).transform.GetChild(0).gameObject.SetActive(true);
         canvas.transform.GetChild(0).transform.GetChild(0).transform.GetChild(1).gameObject.SetActive(false);
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
+        canvas.transform.GetChild(0).transform.GetChild(0).transform.GetChild(2).transform.GetChild(0).gameObject.SetActive(true);
         canvas.transform.GetChild(0).transform.GetChild(0).transform.GetChild(2).gameObject.SetActive(false);
-        yield return new WaitForSeconds(2);
-        canvas.gameObject.SetActive(false);
+       yield return new WaitForSeconds(1);
+        canvas.transform.GetChild(0).gameObject.SetActive(false);
+
+        StopCoroutine(DesaparicionPocimas());
     }
 
     IEnumerator ExplosionCajaSorpresa()
     {
-        yield return new WaitForSeconds(8);
+        yield return new WaitForSeconds(5);
         cajaSorpresa.transform.GetChild(1).gameObject.SetActive(false);
         cajaSorpresa.transform.GetChild(2).gameObject.SetActive(true);
+        yield return new WaitForSeconds(5);
 
         // Mostramos el panel de victoria
         winCanvas.transform.GetChild(0).transform.GetChild(0).gameObject.SetActive(true);
         winCanvas.transform.GetChild(0).transform.GetChild(1).gameObject.SetActive(false);
-        winCanvas.transform.GetChild(0).transform.GetChild(1).gameObject.SetActive(false);
+        winCanvas.transform.GetChild(0).transform.GetChild(2).gameObject.SetActive(true);
+        winCanvas.transform.GetChild(0).transform.GetChild(3).gameObject.SetActive(false);
         winCanvas.gameObject.SetActive(true);
     }
 

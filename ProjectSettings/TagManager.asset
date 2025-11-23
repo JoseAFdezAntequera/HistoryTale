@@ -16,6 +16,7 @@ TagManager:
   - ResumeButton
   - Win
   - Defeat
+  - Guardia
   layers:
   - Default
   - TransparentFX
