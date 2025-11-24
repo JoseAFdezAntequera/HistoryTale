@@ -25,6 +25,9 @@ public class Player : MonoBehaviour
         bloquear = false;
         bloquearHabla = true;
         countPocimas = 0;
+
+        // Hacemos seguir a la camara al player
+        camera.transform.position = new Vector3(transform.position.x, camera.transform.position.y, transform.position.z - 5.0f);
     }
 
     // Update is called once per frame
@@ -33,6 +36,9 @@ public class Player : MonoBehaviour
         // Si no está hablando con un pj
         if (!bloquearHabla)
         {
+            // Hacemos seguir a la camara al player
+            camera.transform.position = new Vector3(transform.position.x, camera.transform.position.y, transform.position.z - 5.0f);
+
             if (Input.GetMouseButtonDown(0))
             {
                 // Lanzamos un rayo desde el puntero del mouse en la cordenada Z
@@ -105,15 +111,7 @@ public class Player : MonoBehaviour
                                 break;
 
                             case "Box":
-                                if (countPocimas >= -3)
-                                {
-                                    // Abrimos el inventario
-                                    if (!canvas.gameObject.activeSelf) canvas.gameObject.SetActive(true);
-
-                                    StartCoroutine(DesaparicionPocimas());
-
-                                    StartCoroutine(ExplosionCajaSorpresa());
-                                }
+                                if (countPocimas >= 3) Fungus.Flowchart.BroadcastFungusMessage("Inventario");
                                 else
                                 {
                                     winCanvas.transform.GetChild(0).transform.GetChild(0).gameObject.SetActive(false);
@@ -126,43 +124,7 @@ public class Player : MonoBehaviour
                     }
                 }
             }
-
-            // Hacemos seguir a la camara al player
-            camera.transform.position = new Vector3(transform.position.x, camera.transform.position.y, transform.position.z - 5.0f);
         }
-    }
-
-    IEnumerator DesaparicionPocimas()
-    {
-        yield return new WaitForSeconds(1);
-        canvas.transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).gameObject.SetActive(true);
-        yield return new WaitForSeconds(1);
-        canvas.transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).gameObject.SetActive(false);
-        yield return new WaitForSeconds(1);
-        canvas.transform.GetChild(0).transform.GetChild(0).transform.GetChild(1).transform.GetChild(0).gameObject.SetActive(true);
-        canvas.transform.GetChild(0).transform.GetChild(0).transform.GetChild(1).gameObject.SetActive(false);
-        yield return new WaitForSeconds(1);
-        canvas.transform.GetChild(0).transform.GetChild(0).transform.GetChild(2).transform.GetChild(0).gameObject.SetActive(true);
-        canvas.transform.GetChild(0).transform.GetChild(0).transform.GetChild(2).gameObject.SetActive(false);
-       yield return new WaitForSeconds(1);
-        canvas.transform.GetChild(0).gameObject.SetActive(false);
-
-        StopCoroutine(DesaparicionPocimas());
-    }
-
-    IEnumerator ExplosionCajaSorpresa()
-    {
-        yield return new WaitForSeconds(5);
-        cajaSorpresa.transform.GetChild(1).gameObject.SetActive(false);
-        cajaSorpresa.transform.GetChild(2).gameObject.SetActive(true);
-        yield return new WaitForSeconds(5);
-
-        // Mostramos el panel de victoria
-        winCanvas.transform.GetChild(0).transform.GetChild(0).gameObject.SetActive(true);
-        winCanvas.transform.GetChild(0).transform.GetChild(1).gameObject.SetActive(false);
-        winCanvas.transform.GetChild(0).transform.GetChild(2).gameObject.SetActive(true);
-        winCanvas.transform.GetChild(0).transform.GetChild(3).gameObject.SetActive(false);
-        winCanvas.gameObject.SetActive(true);
     }
 
     // Estas dos funciones son utilizadas por el Fungus para activar la conversación
